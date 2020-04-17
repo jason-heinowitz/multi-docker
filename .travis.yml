@@ -1,0 +1,22 @@
+sudo: required
+services:
+  - docker
+
+before_install:
+  - docker build -t jheinowitz/react-test -f ./client/Dockerfile.dev ./client
+
+script:
+  - docker run -e CI=true jheinowitz/react-test npm test
+
+after_success:
+  - docker build -t jheinowitz/multi-client ./client
+  - docker build -t jheinowitz/multi-server ./server
+  - docker build -t jheinowitz/multi-worker ./worker
+  - docker build -t jheinowitz/multi-nginx ./nginx
+  # log in to Docker Hub
+  - echo "$DOCKER_PASSWORD" | docker login -u "$DOCKER_ID" --password-stdin
+  # push images up
+  - docker push jheinowitz/multi-client
+  - docker push jheinowitz/multi-server
+  - docker push jheinowitz/multi-worker
+  - docker push jheinowitz/multi-nginx
