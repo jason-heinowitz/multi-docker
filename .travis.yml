@@ -20,3 +20,7 @@ after_success:
   - docker push jheinowitz/multi-server
   - docker push jheinowitz/multi-worker
   - docker push jheinowitz/multi-nginx
+
+branch:
+  only:
+    - master
